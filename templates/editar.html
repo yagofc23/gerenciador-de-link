@@ -1,0 +1,67 @@
+<!--GERENCIADOR DE LINKS!-->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Gerenciador de Links</title>
+    <!-- Assumindo que você criou a pasta 'static' e o arquivo 'style.css' -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Adicionar Novo Link</h1>
+
+        <form action="/adicionar" method="POST">
+            
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo_html" placeholder="Ex: Meu GitHub" required>
+            
+            <label for="url">URL:</label>
+            <input type="url" id="url" name="url_html" placeholder="https://..." required>
+            
+            <button type="submit">Salvar Link</button>
+        </form>
+
+        <hr>
+
+        <h1>Meus Links Salvos</h1>
+
+        <ul>
+            <!-- 
+                Esta seção foi modificada para incluir os formulários de exclusão E edição
+            -->
+            {% for link in links_para_mostrar %}
+                <li>
+                    <!-- O SEU LINK (igual a antes) -->
+                    <a href="{{ link.url }}" target="_blank">
+                        {{ link.titulo }}
+                    </a>
+                    
+                    <!-- 
+                        CÓDIGO ADICIONADO: 
+                        Este é o link/botão para a página de edição
+                    -->
+                    <a href="{{ url_for('editar_link', id_do_link=link.id) }}" style="background-color: #007bff; color: white; text-decoration: none; padding: 5px 8px; border-radius: 4px; margin-left: 10px; font-size: 14px;">
+                        Editar
+                    </a>
+                    
+                    <!-- 
+                        Seu formulário de exclusão (igual a antes)
+                    -->
+                    <form action="{{ url_for('excluir_link', id_do_link=link.id) }}" method="POST" style="display: inline-block; margin-left: 5px;">
+                        <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer;">
+                            Excluir
+                        </button>
+                    </form>
+
+                </li>
+            {% else %}
+                <li><p>Ainda não há links. Adicione um acima!</p></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
