@@ -45,6 +45,21 @@ class Link(db.Model):
     publico = db.Column(db.Boolean, default=False)
     clicks = db.Column(db.Integer, default=0)
 
+
+# --- CRIAÇÃO DO BANCO DE DADOS (Preparado para o Render) ---
+with app.app_context():
+    # Cria a pasta de uploads se ela não existir
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Cria as tabelas do banco de dados
+    db.create_all()
+    # Cria o usuário padrão se não existir
+    if not User.query.filter_by(username='yago.costa').first():
+        senha_hash = generate_password_hash('12345')
+        admin = User(username='yago.costa', password=senha_hash)
+        db.session.add(admin)
+        db.session.commit()
+
+
 # --- ROTAS ---
 
 # ROTA DE UPLOAD DE FOTO
@@ -152,11 +167,5 @@ def editar_link(id_do_link):
         return render_template('editar.html', link=link)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        if not User.query.filter_by(username='yago.costa').first():
-            senha_hash = generate_password_hash('12345')
-            admin = User(username='yago.costa', password=senha_hash)
-            db.session.add(admin)
-            db.session.commit()
+    # Agora aqui fica apenas o comando para rodar localmente na sua máquina
     app.run(debug=True)
